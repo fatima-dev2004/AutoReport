@@ -1,0 +1,59 @@
+# Exemple de configuration GitHub Actions pour les tests
+# Renommer ce fichier en .github/workflows/test.yml pour l'activer
+
+name: Tests Frontend
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: autoreport-frontend/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./autoreport-frontend
+      run: npm ci
+
+    - name: Run tests
+      working-directory: ./autoreport-frontend
+      run: npm test -- --run --coverage
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./autoreport-frontend/coverage/coverage-final.json
+        flags: frontend
+        name: frontend-coverage
+        fail_ci_if_error: false
+
+    - name: Archive coverage report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: autoreport-frontend/coverage/
+
+    - name: Comment PR with coverage
+      if: github.event_name == 'pull_request'
+      uses: romeovs/lcov-reporter-action@v0.3.1
+      with:
+        lcov-file: ./autoreport-frontend/coverage/lcov.info
+        github-token: ${{ secrets.GITHUB_TOKEN }}
