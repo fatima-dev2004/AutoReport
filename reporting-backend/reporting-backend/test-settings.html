@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Paramètres Système - Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #2196F3;
+            border-radius: 5px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.secondary {
+            background: #2196F3;
+        }
+        button.secondary:hover {
+            background: #0b7dda;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Backend - Paramètres Système</h1>
+        
+        <div class="section">
+            <h2>1️⃣ Connexion (Login)</h2>
+            <label>Email:</label>
+            <input type="email" id="loginEmail" value="admin@sews.com">
+            
+            <label>Mot de passe:</label>
+            <input type="password" id="loginPassword" value="Admin@123">
+            
+            <button onclick="login()">🔐 Se Connecter</button>
+            <div id="loginResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>2️⃣ Récupérer les Paramètres (GET)</h2>
+            <button onclick="getSettings()" class="secondary">📥 Récupérer Paramètres</button>
+            <div id="getResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>3️⃣ Mettre à Jour les Paramètres (PUT)</h2>
+            
+            <h3>SMTP</h3>
+            <label>Serveur SMTP:</label>
+            <input type="text" id="smtpHost" value="smtp.gmail.com">
+            
+            <label>Port:</label>
+            <input type="text" id="smtpPort" value="587">
+            
+            <label>Username:</label>
+            <input type="text" id="smtpUsername" value="Nourbenritounia@gmail.com">
+            
+            <label>Password:</label>
+            <input type="password" id="smtpPassword" value="test123">
+            
+            <label>Email From:</label>
+            <input type="text" id="smtpFrom" value="benritouniafatima08@gmail.com">
+            
+            <label>From Name:</label>
+            <input type="text" id="smtpFromName" value="AutoReport System">
+            
+            <h3>Entreprise</h3>
+            <label>Nom de l'entreprise:</label>
+            <input type="text" id="companyName" value="SEWS CABIND">
+            
+            <button onclick="updateSettings()">💾 Enregistrer Paramètres</button>
+            <div id="updateResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>4️⃣ Test Email</h2>
+            <label>Email destinataire:</label>
+            <input type="email" id="testEmail" value="benritouniafatima08@gmail.com">
+            
+            <button onclick="testEmail()" class="secondary">📧 Tester Envoi Email</button>
+            <div id="testEmailResult" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let token = null;
+        const API_URL = 'http://localhost:8080';
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            console.log('🔐 Tentative de connexion...');
+            console.log('Email:', email);
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                console.log('Status:', response.status);
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(`Erreur ${response.status}: ${error}`);
+                }
+
+                const data = await response.json();
+                token = data.token;
+                
+                console.log('✅ Connexion réussie');
+                console.log('Token:', token);
+                console.log('User ID:', data.userId);
+                console.log('Role:', data.role);
+
+                showResult('loginResult', 
+                    `✅ Connexion réussie!\n\nToken: ${token.substring(0, 50)}...\nUser: ${data.fullName}\nRole: ${data.role}`,
+                    'success');
+
+            } catch (error) {
+                console.error('❌ Erreur de connexion:', error);
+                showResult('loginResult', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function getSettings() {
+            if (!token) {
+                showResult('getResult', '❌ Veuillez vous connecter d\'abord!', 'error');
+                return;
+            }
+
+            console.log('📥 Récupération des paramètres...');
+            console.log('URL:', `${API_URL}/api/admin/settings`);
+            console.log('Token:', token.substring(0, 50) + '...');
+
+            try {
+                const response = await fetch(`${API_URL}/api/admin/settings`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Status:', response.status);
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(`Erreur ${response.status}: ${error}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Paramètres récupérés:', data);
+
+                showResult('getResult', 
+                    `✅ Paramètres récupérés avec succès!\n\n${JSON.stringify(data, null, 2)}`,
+                    'success');
+
+                // Pré-remplir les champs
+                if (data.smtp) {
+                    document.getElementById('smtpHost').value = data.smtp['smtp.host'] || '';
+                    document.getElementById('smtpPort').value = data.smtp['smtp.port'] || '';
+                    document.getElementById('smtpUsername').value = data.smtp['smtp.username'] || '';
+                    document.getElementById('smtpPassword').value = data.smtp['smtp.password'] || '';
+                    document.getElementById('smtpFrom').value = data.smtp['smtp.from'] || '';
+                    document.getElementById('smtpFromName').value = data.smtp['smtp.fromName'] || '';
+                }
+                
+                if (data.company) {
+                    document.getElementById('companyName').value = data.company['company.name'] || '';
+                }
+
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                showResult('getResult', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateSettings() {
+            if (!token) {
+                showResult('updateResult', '❌ Veuillez vous connecter d\'abord!', 'error');
+                return;
+            }
+
+            const settingsData = {
+                smtp: {
+                    'smtp.host': document.getElementById('smtpHost').value,
+                    'smtp.port': document.getElementById('smtpPort').value,
+                    'smtp.username': document.getElementById('smtpUsername').value,
+                    'smtp.password': document.getElementById('smtpPassword').value,
+                    'smtp.from': document.getElementById('smtpFrom').value,
+                    'smtp.fromName': document.getElementById('smtpFromName').value
+                },
+                company: {
+                    'company.name': document.getElementById('companyName').value,
+                    'company.logo': '',
+                    'company.address': '',
+                    'company.phone': '',
+                    'company.email': 'contact@sews.com'
+                },
+                scheduling: {
+                    'scheduling.defaultDays': 'MONDAY,FRIDAY',
+                    'scheduling.defaultTime': '08:00',
+                    'scheduling.timezone': 'Africa/Casablanca'
+                },
+                general: {
+                    'general.dateFormat': 'dd/MM/yyyy',
+                    'general.language': 'fr',
+                    'general.reportsRetentionDays': '90'
+                }
+            };
+
+            console.log('💾 Mise à jour des paramètres...');
+            console.log('URL:', `${API_URL}/api/admin/settings`);
+            console.log('Data:', JSON.stringify(settingsData, null, 2));
+
+            try {
+                const response = await fetch(`${API_URL}/api/admin/settings`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settingsData)
+                });
+
+                console.log('Status:', response.status);
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    console.error('Erreur serveur:', error);
+                    throw new Error(`Erreur ${response.status}: ${error}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Paramètres mis à jour:', data);
+
+                showResult('updateResult', 
+                    `✅ ${data.message}\n\nLes paramètres ont été enregistrés avec succès!`,
+                    'success');
+
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                showResult('updateResult', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEmail() {
+            if (!token) {
+                showResult('testEmailResult', '❌ Veuillez vous connecter d\'abord!', 'error');
+                return;
+            }
+
+            const recipient = document.getElementById('testEmail').value;
+
+            console.log('📧 Test d\'envoi email...');
+            console.log('Destinataire:', recipient);
+
+            try {
+                const response = await fetch(`${API_URL}/api/admin/settings/test-email?recipient=${encodeURIComponent(recipient)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Status:', response.status);
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(`Erreur ${response.status}: ${error}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Résultat:', data);
+
+                if (data.success) {
+                    showResult('testEmailResult', `✅ ${data.message}`, 'success');
+                } else {
+                    showResult('testEmailResult', `❌ ${data.message}`, 'error');
+                }
+
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                showResult('testEmailResult', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // Info au chargement
+        console.log('🧪 Page de test chargée');
+        console.log('Backend URL:', API_URL);
+        console.log('Credentials par défaut: admin@sews.com / Admin@123');
+    </script>
+</body>
+</html>

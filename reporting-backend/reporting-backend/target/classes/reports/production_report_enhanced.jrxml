@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="production_report_enhanced"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="535"
+              leftMargin="30"
+              rightMargin="30"
+              topMargin="30"
+              bottomMargin="30">
+
+    <subDataset name="ProductionByLineDataset">
+        <field name="lineName" class="java.lang.String"/>
+        <field name="quantity" class="java.lang.Double"/>
+    </subDataset>
+
+    <parameter name="REPORT_TITLE" class="java.lang.String"/>
+    <parameter name="PERIOD_LABEL" class="java.lang.String"/>
+    <parameter name="TOTAL_PRODUCTION" class="java.lang.String"/>
+    <parameter name="TOTAL_DEFECTS" class="java.lang.String"/>
+    <parameter name="QUALITY_RATE" class="java.lang.String"/>
+    <parameter name="DEFECT_RATE" class="java.lang.String"/>
+    <parameter name="LINES_TEXT" class="java.lang.String"/>
+    <parameter name="GENERATED_AT" class="java.lang.String"/>
+    <parameter name="COMPANY_NAME" class="java.lang.String"/>
+    <parameter name="COMPANY_LOGO_PATH" class="java.lang.String"/>
+    <parameter name="GENERATED_BY" class="java.lang.String"/>
+
+    <parameter name="CHART_PRODUCTION_BY_LINE" class="net.sf.jasperreports.engine.JRDataSource"/>
+    <parameter name="CHART_DAILY_PRODUCTION" class="net.sf.jasperreports.engine.JRDataSource"/>
+
+    <title>
+        <band height="782">
+            <rectangle>
+                <reportElement x="0" y="0" width="535" height="200" backcolor="#667EEA"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+
+            <image scaleImage="RetainShape" hAlign="Center" onErrorType="Blank">
+                <reportElement x="197" y="30" width="140" height="80"/>
+                <imageExpression><![CDATA[$P{COMPANY_LOGO_PATH}]]></imageExpression>
+            </image>
+
+            <staticText>
+                <reportElement x="0" y="120" width="535" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true" fontName="Arial"/>
+                </textElement>
+                <text><![CDATA[AutoReport SYSTEM]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="0" y="155" width="535" height="35"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="22" isBold="true" fontName="Arial"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{COMPANY_NAME} != null ? $P{COMPANY_NAME} : "SEWS CABIND"]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="0" y="250" width="535" height="35"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="28" isBold="true" fontName="Arial"/>
+                </textElement>
+                <text><![CDATA[Rapport de Production]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="0" y="295" width="535" height="25"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="false" fontName="Arial"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="330" width="535" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" fontName="Arial"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Période analysée : " + $P{PERIOD_LABEL}]]></textFieldExpression>
+            </textField>
+
+            <rectangle radius="12">
+                <reportElement x="40" y="400" width="220" height="100" backcolor="#F0F4FF"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="50" y="415" width="200" height="18"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <text><![CDATA[PRODUCTION TOTALE]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="50" y="440" width="150" height="40"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="24" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{TOTAL_PRODUCTION}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="50" y="475" width="200" height="15"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <text><![CDATA[unités]]></text>
+            </staticText>
+
+            <rectangle radius="12">
+                <reportElement x="275" y="400" width="220" height="100" backcolor="#F0FDF9"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="285" y="415" width="200" height="18"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <text><![CDATA[TAUX DE QUALITÉ]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="285" y="440" width="150" height="40"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="24" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{QUALITY_RATE} + " %"]]></textFieldExpression>
+            </textField>
+
+            <rectangle radius="12">
+                <reportElement x="40" y="520" width="220" height="100" backcolor="#FFF1F2"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="50" y="535" width="200" height="18"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <text><![CDATA[DÉFAUTS CONSTATÉS]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="50" y="560" width="150" height="40"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="24" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{TOTAL_DEFECTS}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="50" y="595" width="200" height="15"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <text><![CDATA[unités]]></text>
+            </staticText>
+
+            <rectangle radius="12">
+                <reportElement x="275" y="520" width="220" height="100" backcolor="#FFF7ED"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="285" y="535" width="200" height="18"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <text><![CDATA[TAUX DE DÉFAUT]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="285" y="560" width="150" height="40"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="24" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{DEFECT_RATE} + " %"]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="680" width="535" height="18"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Généré le : " + $P{GENERATED_AT}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="705" width="535" height="18"/>
+                <textElement textAlignment="Center">
+                    <font size="9" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{GENERATED_BY} != null ? "Par : " + $P{GENERATED_BY} : ""]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="0" y="750" width="535" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8" fontName="Arial"/>
+                </textElement>
+                <text><![CDATA[L'intelligence au service de votre performance]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <pageHeader>
+        <band height="50">
+            <textField>
+                <reportElement x="0" y="10" width="400" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Rapport de Production - " + $P{PERIOD_LABEL}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="450" y="10" width="85" height="25"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+
+            <line>
+                <reportElement x="0" y="45" width="535" height="1"/>
+                <graphicElement>
+                    <pen lineColor="#1976D2"/>
+                </graphicElement>
+            </line>
+        </band>
+    </pageHeader>
+
+    <detail>
+        <band height="680">
+            <staticText>
+                <reportElement x="0" y="10" width="535" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[📊 INDICATEURS CLÉS]]></text>
+            </staticText>
+
+            <rectangle radius="12">
+                <reportElement x="0" y="45" width="125" height="80" backcolor="#F0F4FF"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="10" y="50" width="105" height="18"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[PRODUCTION TOTALE]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="10" y="70" width="105" height="35"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{TOTAL_PRODUCTION}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="10" y="105" width="105" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[unités]]></text>
+            </staticText>
+
+            <rectangle radius="12">
+                <reportElement x="137" y="45" width="125" height="80" backcolor="#FFF1F2"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="147" y="50" width="105" height="18"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[DÉFAUTS CONSTATÉS]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="147" y="70" width="105" height="35"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{TOTAL_DEFECTS}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="147" y="105" width="105" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[unités]]></text>
+            </staticText>
+
+            <rectangle radius="12">
+                <reportElement x="274" y="45" width="125" height="80" backcolor="#F0FDF9"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="284" y="50" width="105" height="18"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[TAUX DE QUALITÉ]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="284" y="70" width="105" height="35"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{QUALITY_RATE} + " %"]]></textFieldExpression>
+            </textField>
+
+            <rectangle radius="12">
+                <reportElement x="411" y="45" width="125" height="80" backcolor="#FFF7ED"/>
+                <graphicElement>
+                    <pen lineWidth="0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="421" y="50" width="105" height="18"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[TAUX DE DÉFAUT]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="421" y="70" width="105" height="35"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{DEFECT_RATE} + " %"]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="0" y="150" width="535" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[📈 PRODUCTION PAR LIGNE]]></text>
+            </staticText>
+
+            <rectangle radius="8">
+                <reportElement x="0" y="185" width="535" height="220" backcolor="#FAFAFA"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#CCCCCC"/>
+                </graphicElement>
+            </rectangle>
+
+            <barChart>
+                <chart evaluationTime="Report" theme="default">
+                    <reportElement x="10" y="195" width="515" height="200"/>
+                    <chartTitle>
+                        <font size="11" isBold="true"/>
+                        <titleExpression><![CDATA["Production par ligne de production"]]></titleExpression>
+                    </chartTitle>
+                    <chartSubtitle/>
+                    <chartLegend position="Bottom"/>
+                </chart>
+                <categoryDataset>
+                    <dataset>
+                        <datasetRun subDataset="ProductionByLineDataset">
+                            <dataSourceExpression><![CDATA[$P{CHART_PRODUCTION_BY_LINE}]]></dataSourceExpression>
+                        </datasetRun>
+                    </dataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA["Production"]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{lineName}]]></categoryExpression>
+                        <valueExpression><![CDATA[$F{quantity}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot>
+                    <plot/>
+                    <itemLabel/>
+                    <categoryAxisFormat>
+                        <axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                        <axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+                    </valueAxisFormat>
+                </barPlot>
+            </barChart>
+
+            <staticText>
+                <reportElement x="0" y="425" width="535" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[📋 DÉTAILS PAR LIGNE DE PRODUCTION]]></text>
+            </staticText>
+
+            <rectangle radius="8">
+                <reportElement x="0" y="460" width="535" height="200" backcolor="#FAFAFA"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#CCCCCC"/>
+                </graphicElement>
+            </rectangle>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="15" y="475" width="505" height="170"/>
+                <textElement>
+                    <font size="10" fontName="Courier New"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{LINES_TEXT}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="30">
+            <line>
+                <reportElement x="0" y="5" width="535" height="1"/>
+                <graphicElement>
+                    <pen lineColor="#CCCCCC"/>
+                </graphicElement>
+            </line>
+
+            <textField>
+                <reportElement x="0" y="12" width="180" height="15"/>
+                <textElement>
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{COMPANY_NAME} != null ? $P{COMPANY_NAME} : "SEWS CABIND"]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="400" y="12" width="135" height="15"/>
+                <textElement textAlignment="Right">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " / " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+</jasperReport>
